@@ -4,3 +4,7 @@ This is the code-repository for the manuscript: **"Ecosystem Physio-phenology re
 Each figure from the manuscript can be generated using the respective script (See script titles).
 
 FLUXNET database is available at: https://fluxnet.fluxdata.org/
+
+
+
+[![DOI](https://zenodo.org/badge/275751134.svg)](https://zenodo.org/badge/latestdoi/275751134)
