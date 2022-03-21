@@ -7,44 +7,24 @@
 library(circular)
 library(lubridate)
 
-# function to scale the variables
-scal  <- function(x) {
-  y  <- (x - mean(x, na.rm = T))/sd(x, na.rm = T)
-  return(y)
-}
+# based on the code example presented on the circular package
 
-# DOY
-DOY <- c(35, 365, 3, 364, 1, 25, 12, 18)
+set.seed(1234)
 
+# tair and precip
+x <- cbind(scale(rnorm(100, mean = 25, sd = 2)), scale(rnorm(100, mean = 200, sd = 10)))
 
-# from DOY to radians
-y <- DOY * (360/365) * (pi/180)
-
-# circular object
-y <- circular(x, units = "radians", modulo = "2pi", rotation = "clock",  zero = pi/2)
-
-# plotting x
-
-plot.circular(x, type = "n", cex = 1, bin = 720, stack = T, sep = 0.02, shrink = 1.3, axes = F)
-axis.circular(at = circular(seq(1,365, by = 75) * (360/365) * (pi/180), units = "radians", modulo = "2pi", rotation = "clock",  zero = pi/2), units =  "radians", labels = seq(1,365, by = 75), zero = pi/2, rotation = "clock",cex = 1, tick = T)
-points.circular(x, stack = F, col = "red", pch = 1, cex = 1.2)
-
-
-# temperature:
-set.seed(31)
-tair <- rnorm(length(DOY), mean = 27, sd = 5)
-
-# precipitation (mm)
-set.seed(31)
-precip <- rnorm(length(DOY), mean = 200, sd = 3)
-
-
-climate_vars <- as.matrix(data.frame(scal(tair), scal(precip)))
-
-
+# timing + noise
+y <- circular(2*atan(c(x%*%c(0.1,0.2))))+rvonmises(100, mu=circular(0), kappa=100)
 
 # circular-linear regression
+lm.circular(y=y, x=x, init=c(0.1,0.2), type='c-l', verbose=TRUE)
 
-regression <- lm.circular(type = "c-l", y = y, x = climate_vars, init = c(0,0), verbose = T)
 
-regression
+# plotting y
+
+plot.circular(y, type = "n", cex = 1, bin = 720, stack = T, sep = 0.02, shrink = 1.3, axes = F)
+axis.circular(at = circular(seq(1,365, by = 75) * (360/365) * (pi/180), units = "radians", modulo = "2pi", rotation = "counter",  zero = 0), units =  "radians", labels = seq(1,365, by = 75), zero = 0, rotation = "counter",cex = 1, tick = T)
+points.circular(y, stack = T, col = "red", pch = 1, cex = 1.2)
+
+
